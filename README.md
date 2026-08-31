@@ -144,8 +144,30 @@ Done — the reunion countdown is on her home screen, and notifications are set.
 - **On the day:** the tile flips to **¡HOY!**. Tapping it opens a full-screen
   **confetti** celebration (tap **🔊 sonido** for the cheer — iOS blocks
   auto-playing sound without a tap).
-- **After:** it shows "Con Lucas 🇪🇸" for the first week, then a "días juntos"
+- **After:** it shows "¡Juntos! 🇪🇸" for the first week, then a "días juntos"
   counter.
+
+---
+
+## Lock-screen widget (bonus)
+
+The same **Sevilla Widget** script also renders as a **lock-screen widget**, so
+the countdown shows without even unlocking. It comes in three shapes:
+
+- **Rectangular:** `✈️ 6 días · para el reencuentro en Sevilla`
+- **Circular:** just the number (e.g. **6**), or ❤️ on/after the day
+- **Inline** (the line above the clock): `✈️ 6 días · Sevilla`
+
+**To add it (on either phone):**
+1. Long-press the **lock screen** → **Customize** → tap **Lock Screen**.
+2. Tap the widget area **below the clock** (rectangular/circular) or the slot
+   **above the clock** (inline).
+3. Choose **Scriptable** → pick the **Sevilla Widget** script → select the shape.
+4. Tap **Done**.
+
+Lock-screen widgets are **monochrome** (iOS tints them to match the wallpaper) —
+that's an OS rule, not a bug, so there's no red gradient there; just the number
+and text. Same midnight-tick and refresh behavior as the home-screen tile.
 
 ---
 

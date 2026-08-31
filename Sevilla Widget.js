@@ -1,10 +1,16 @@
-// Sevilla Widget.js — the home-screen tile AND the tap-to-open celebration.
+// Sevilla Widget.js — the HOME-screen tile, the LOCK-screen widget, AND the
+// tap-to-open celebration.
 //
-// The SAME file runs in two contexts:
-//   • config.runsInWidget === true  → render the static tile
-//   • config.runsInWidget === false → user tapped it → open a full-screen WebView
+// The SAME file runs in several contexts:
+//   • config.runsInWidget === true, family "small"/"medium"/"large"
+//       → the colorful home-screen tile
+//   • config.runsInWidget === true, family "accessoryRectangular"/"Circular"/
+//       "Inline"  → the compact, monochrome LOCK-screen widget
+//   • config.runsInWidget === false → user tapped it → full-screen WebView
 //
-// Add it to the home screen: long-press → + → Scriptable → pick this script.
+// Add to HOME: long-press home screen → + → Scriptable → pick this script.
+// Add to LOCK: lock screen → Customize → Lock Screen → add widgets under the
+//   clock → Scriptable → pick this script (choose rectangular/circular/inline).
 
 const core = importModule("SevillaCore");
 const cfg = importModule("SevillaConfig");
@@ -18,16 +24,28 @@ if (config.runsInWidget) {
 Script.complete();
 
 // ─────────────────────────────────────────────────────────────────────────
-// WIDGET (static tile)
+// WIDGET DISPATCH
 // ─────────────────────────────────────────────────────────────────────────
 
 function buildWidget(family) {
+  // Lock-screen accessory widgets are monochrome + tiny → their own renderers.
+  if (family === "accessoryRectangular") return buildLockRectangular();
+  if (family === "accessoryCircular") return buildLockCircular();
+  if (family === "accessoryInline") return buildLockInline();
+  return buildHomeWidget(family);
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// HOME-SCREEN TILE (colorful, static)
+// ─────────────────────────────────────────────────────────────────────────
+
+function buildHomeWidget(family) {
   const w = new ListWidget();
   applyBackground(w);
   w.setPadding(14, 16, 14, 16);
 
   const days = core.daysRemaining();
-  const isSmall = family === "small" || family === "accessoryRectangular";
+  const isSmall = family === "small";
 
   if (days > 0) renderFuture(w, days, isSmall);
   else if (days === 0) renderToday(w);
@@ -35,6 +53,74 @@ function buildWidget(family) {
 
   // Ask iOS to reload just after the next Sevilla midnight so the number ticks
   // over. This is a hint — iOS may delay it on low battery / if rarely viewed.
+  w.refreshAfterDate = core.nextLocalMidnight();
+  return w;
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// LOCK-SCREEN WIDGETS (monochrome, compact — iOS tints them a single color, so
+// no gradients/backgrounds; keep text short and rely on the system tint)
+// ─────────────────────────────────────────────────────────────────────────
+
+// Short glanceable phrase for the current state, e.g. "6 días" / "¡HOY!".
+function lockText() {
+  const days = core.daysRemaining();
+  if (days > 0) return { big: String(days), small: days === 1 ? "día ❤️" : "días ❤️" };
+  if (days === 0) return { big: "¡HOY!", small: "❤️" };
+  const n = Math.abs(days);
+  return { big: "❤️", small: n <= 7 ? "¡juntos!" : `+${n} días` };
+}
+
+// Rectangular: the roomiest lock-screen slot → "✈️ 6 días · Sevilla".
+function buildLockRectangular() {
+  const w = new ListWidget();
+  const t = lockText();
+  const days = core.daysRemaining();
+
+  const row = w.addStack();
+  row.centerAlignContent();
+  const plane = row.addText("✈️ ");
+  plane.font = Font.mediumSystemFont(14);
+  const num = row.addText(days > 0 ? `${t.big} ${t.small}` : `${t.big} ${t.small}`);
+  num.font = Font.boldSystemFont(15);
+
+  w.addSpacer(2);
+  const sub = w.addText(days > 0 ? `para el reencuentro en ${cfg.city}` : cfg.city);
+  sub.font = Font.systemFont(11);
+  sub.textOpacity = 0.7;
+  sub.lineLimit = 1;
+
+  w.refreshAfterDate = core.nextLocalMidnight();
+  return w;
+}
+
+// Circular: just the number in a tight ring (or ¡HOY!/❤️).
+function buildLockCircular() {
+  const w = new ListWidget();
+  const t = lockText();
+  w.addSpacer();
+  const stack = w.addStack();
+  stack.addSpacer();
+  const big = stack.addText(t.big);
+  big.font = t.big.length <= 2 ? Font.boldSystemFont(22) : Font.boldSystemFont(14);
+  big.minimumScaleFactor = 0.5;
+  big.centerAlignText();
+  stack.addSpacer();
+  w.addSpacer();
+  w.refreshAfterDate = core.nextLocalMidnight();
+  return w;
+}
+
+// Inline: the one-line slot above the clock → "✈️ 6 días · Sevilla".
+function buildLockInline() {
+  const w = new ListWidget();
+  const days = core.daysRemaining();
+  let s;
+  if (days > 0) s = `✈️ ${days} ${days === 1 ? "día" : "días"} · ${cfg.city}`;
+  else if (days === 0) s = `❤️ ¡Hoy es el reencuentro!`;
+  else s = Math.abs(days) <= 7 ? `❤️ ¡Juntos en ${cfg.city}!` : `❤️ +${Math.abs(days)} días juntos`;
+  const t = w.addText(s);
+  t.font = Font.mediumSystemFont(13);
   w.refreshAfterDate = core.nextLocalMidnight();
   return w;
 }
