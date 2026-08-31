@@ -417,9 +417,6 @@ function celebrationHTML() {
     text-shadow:0 4px 20px rgba(0,0,0,.25);animation:pop .6s ease-out both}
   .msg{font-size:6.5vw;font-weight:600;opacity:.96;margin:0}
   .sub{font-size:4.5vw;font-weight:500;opacity:.8;margin:0}
-  button{margin-top:10px;padding:14px 22px;border:0;border-radius:24px;
-    font-size:5vw;background:#fff;color:${bottom};font-weight:700;
-    box-shadow:0 6px 18px rgba(0,0,0,.2)}
   @keyframes pop{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:1}}
   @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
 </style></head><body>
@@ -428,9 +425,7 @@ function celebrationHTML() {
   <h1 class="hoy">¡HOY!</h1>
   <p class="msg">Hoy es el reencuentro en ${city}</p>
   <p class="sub">se acabó la espera 🥹❤️</p>
-  <button id="snd">🔊 sonido</button>
 </div>
-<audio id="a" preload="auto" src="https://actions.google.com/sounds/v1/crowds/battle_crowd_celebrate.ogg"></audio>
 <script>${lib}</script>
 <script>
   function emojiRain(){
@@ -456,12 +451,9 @@ function celebrationHTML() {
     })();
     confetti({particleCount:200,spread:110,startVelocity:45,origin:{y:.6}});
   }
-  document.getElementById('snd').onclick=function(){
-    var a=document.getElementById('a');a.muted=false;a.currentTime=0;
-    a.play().catch(function(){});boom();
-  };
-  // Fire visuals immediately; sound waits for a tap (iOS autoplay rule).
+  // Auto-fire confetti on load and keep it going; tap anywhere for another burst.
   window.addEventListener('load',function(){boom();setInterval(boom,3500);});
+  document.body.addEventListener('click',boom);
 </script></body></html>`;
 }
 
