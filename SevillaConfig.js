@@ -14,10 +14,12 @@ module.exports = {
   // final 48h and the precise countdown on the status screen.
   targetISO: "2026-12-13T21:05:00+01:00",
 
-  // Optional: when the countdown "started" (e.g. the day she flew to Sevilla,
-  // or the day you booked). Only used to draw the progress bar. Set to null to
-  // hide the bar. Also uses an explicit offset — Aug in Spain is CEST/+02:00.
-  startISO: "2026-08-01T00:00:00+02:00",
+  // When the countdown "started": the day she flew to Sevilla — 25 Aug 2026,
+  // 21:00 URUGUAY time (UTC-3, no DST → offset -03:00). Only used to draw the
+  // progress bar (fraction of the whole separation elapsed). Set null to hide.
+  // Offsets can differ between start (Uruguay) and target (Sevilla) — the math
+  // uses absolute instants, so that's fine.
+  startISO: "2026-08-25T21:00:00-03:00",
 
   // Which clock the day-count ticks on:
   //   "madrid" → flips at midnight in Sevilla (right, since it's on HER phone)
