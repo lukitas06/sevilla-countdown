@@ -14,7 +14,7 @@ const res = await scheduleAll();
 const a = new Alert();
 a.title = "¡Todo listo! ✈️";
 a.message =
-  `Faltan ${days} ${days === 1 ? "día" : "días"} para ver a ${cfg.you} en ${cfg.city}.\n\n` +
+  `Faltan ${days} ${days === 1 ? "día" : "días"} para el reencuentro en ${cfg.city} ❤️.\n\n` +
   `📅 ${res.scheduled} notificaciones agendadas.\n\n` +
   `Para ver la cuenta regresiva siempre a mano:\n` +
   `mantené presionada la pantalla de inicio → tocá "+" arriba → buscá ` +

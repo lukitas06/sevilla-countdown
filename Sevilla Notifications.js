@@ -36,7 +36,7 @@ function planNotifications(now = new Date()) {
       `sevilla-ms-${dB}`,
       atLocal(dB, cfg.milestoneHour, 0),
       `${dB === 1 ? "¡Falta 1 día!" : `Faltan ${dB} días`} ✈️`,
-      `${dB} ${dB === 1 ? "día" : "días"} para ver a ${cfg.you} en ${cfg.city}`
+      `${dB} ${dB === 1 ? "día" : "días"} para el reencuentro en ${cfg.city} ❤️`
     );
   }
 
@@ -51,8 +51,8 @@ function planNotifications(now = new Date()) {
   }
 
   // Big-day blast: at 00:0x, and again that morning.
-  push("sevilla-bigday-mid", atLocal(0, cfg.bigDayHour, cfg.bigDayMinute), "¡HOY! 🎉✈️", `Hoy llega ${cfg.you}. ¡Tocá el widget!`, true);
-  push("sevilla-bigday-am", atLocal(0, cfg.dailyNudgeHour, 0), "¡Es el día! 🇪🇸❤️", `${cfg.city} los espera.`, true);
+  push("sevilla-bigday-mid", atLocal(0, cfg.bigDayHour, cfg.bigDayMinute), "¡HOY es el reencuentro! 🎉✈️", "Se acabó la espera. ¡Tocá el widget! ❤️", true);
+  push("sevilla-bigday-am", atLocal(0, cfg.dailyNudgeHour, 0), "¡Es el día! 🇪🇸❤️", `Hoy se reencuentran en ${cfg.city}.`, true);
 
   return out;
 }
@@ -83,7 +83,7 @@ async function scheduleAll() {
   const ever = new Notification();
   ever.identifier = "sevilla-evergreen";
   ever.title = "Countdown Sevilla 👀";
-  ever.body = `Abrí para ver los días que faltan para ${cfg.you}`;
+  ever.body = "Abrí para ver los días que faltan para el reencuentro ❤️";
   ever.scriptName = "Sevilla Notifications";
   ever.setDailyTrigger(cfg.dailyNudgeHour, 30, true);
   await ever.schedule();

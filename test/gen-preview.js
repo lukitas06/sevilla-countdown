@@ -45,7 +45,7 @@ const a = (cond, msg) => {
 };
 
 a(cel.includes("¡HOY!"), "celebration contains ¡HOY!");
-a(cel.includes(`Hoy llega ${CONFIG.you} a ${CONFIG.city}`), "celebration has the right name+city");
+a(cel.includes(`Hoy es el reencuentro en ${CONFIG.city}`), "celebration has the reunion message + city");
 a(cel.includes("t.confetti=e.exports"), "confetti library is embedded inline");
 a(cel.includes("function boom()"), "boom() launcher present");
 a(cel.includes("emojiRain"), "emoji-rain fallback present");

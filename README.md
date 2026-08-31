@@ -101,29 +101,36 @@ node test/gen-preview.js && open celebration-preview.html status-preview.html
 
 ---
 
-## 3. Put it on her iPhone (the handoff)
+## 3. Put it on her iPhone (remote, over a video call)
 
-1. **Install Scriptable** from the App Store (free). Open it once.
-2. **Get the files in.** Easiest options:
-   - **AirDrop** all six files to her phone → open each in Scriptable, or
-   - Put them in a **shared iCloud folder** you both access, or
-   - Just **paste** each one into a new script (tap **+** in Scriptable), naming
-     each script exactly as the filename (without `.js`), e.g. `SevillaConfig`,
-     `Sevilla Widget`, and the confetti one as `_confetti.min`.
+Her phone is a different iCloud account, so the Mac sync can't reach it. Instead
+there's a **one-tap installer** that downloads everything from this repo. Best
+done together on a video call — it takes ~5 minutes.
 
-   > The confetti file `_confetti.min.js` isn't a script you run — it just needs
-   > to sit in the same Scriptable folder. AirDrop/iCloud is easiest for it.
-3. **Run `Sevilla Setup` once.** Tap it in Scriptable's list → tap ▶. It will
-   ask for **notification permission** — allow it. You'll see "¡Todo listo!"
-   with the days left.
-4. **Add the widget to her home screen:** long-press the home screen → **+**
-   (top-left) → search **Scriptable** → pick the **small** size → **Add** →
-   long-press the new widget → **Edit Widget** → **Script → "Sevilla Widget"**.
+**Send her, ahead of the call:**
+- A link to install **Scriptable** (free, App Store).
+- The contents of **`Install Sevilla.js`** (one script). Paste it into a message,
+  or share the file — whatever survives your chat app intact. (Raw link:
+  `https://raw.githubusercontent.com/lukitas06/sevilla-countdown/main/Install%20Sevilla.js`)
 
-Done. The tile now shows the live countdown, and notifications are scheduled.
+**On the call, walk her through:**
+1. Install **Scriptable** and open it once (so it sets up its folder).
+2. Tap **+** (top-right) → paste the `Install Sevilla` script → tap the title,
+   rename it **Install Sevilla** → **Done**.
+3. Run it (**▶**). It downloads the 6 countdown files and shows **"¡Listo!"**
+   when done. (If any file fails — usually a flaky connection — just run it
+   again; it re-fetches.)
+4. Run **Sevilla Setup** (**▶**) → **Allow** notifications → she sees the days
+   left and "¡Todo listo!".
+5. Add the widget: long-press her home screen → **+** (top-left) → search
+   **Scriptable** → **small** → **Add** → long-press it → **Edit Widget** →
+   **Script → "Sevilla Widget"**.
 
-> On her phone (a different iCloud account), `sync-to-scriptable.sh` won't reach
-> it — use AirDrop, a shared iCloud folder, or paste the files in manually.
+Done — the reunion countdown is on her home screen, and notifications are set.
+
+> **Updating it later** (e.g. you change the arrival date): push the change to
+> the repo, then have her re-run **Install Sevilla** and **Sevilla Setup**. The
+> installer overwrites the files with the latest, and Setup re-schedules.
 
 ---
 

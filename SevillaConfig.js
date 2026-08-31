@@ -21,8 +21,10 @@ module.exports = {
   //   "local"  → flips at the phone's own midnight (use if it lived on yours)
   tickTimezone: "madrid",
 
-  // ── The people (copy is from HER point of view) ─────────────────────────
-  you: "Lucas", // the name SHE sees arriving: "…para ver a Lucas"
+  // ── The place ───────────────────────────────────────────────────────────
+  // Widget/notification copy is about "el reencuentro" (the reunion) in this
+  // city. `you` is kept for reference / future personalization but isn't shown.
+  you: "Lucas",
   city: "Sevilla",
 
   // ── Notification cadence ────────────────────────────────────────────────

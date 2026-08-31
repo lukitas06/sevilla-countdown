@@ -51,7 +51,7 @@ function renderFuture(w, days, isSmall) {
   big.textColor = Color.white();
   big.minimumScaleFactor = 0.5;
 
-  const label = w.addText(days === 1 ? `día para ver a ${cfg.you}` : `días para ver a ${cfg.you}`);
+  const label = w.addText(days === 1 ? "día para el reencuentro ❤️" : "días para el reencuentro ❤️");
   label.font = Font.mediumSystemFont(14);
   label.textColor = Color.white();
   label.minimumScaleFactor = 0.7;
@@ -83,7 +83,7 @@ function renderToday(w) {
   hoy.font = Font.boldSystemFont(46);
   hoy.textColor = Color.white();
   hoy.centerAlignText();
-  const sub = w.addText(`Hoy llega ${cfg.you} 🥹`);
+  const sub = w.addText("¡Hoy es el reencuentro! 🥹");
   sub.font = Font.semiboldSystemFont(15);
   sub.textColor = Color.white();
   sub.centerAlignText();
@@ -99,11 +99,11 @@ function renderAfter(w, days) {
   const nights = Math.abs(days);
   w.addSpacer();
   if (nights <= 7) {
-    const t = w.addText(`Con ${cfg.you} 🇪🇸`);
-    t.font = Font.boldSystemFont(30);
+    const t = w.addText("¡Juntos! 🇪🇸");
+    t.font = Font.boldSystemFont(34);
     t.textColor = Color.white();
     t.centerAlignText();
-    const s = w.addText("disfrútalo ❤️");
+    const s = w.addText("disfrútenlo ❤️");
     s.font = Font.mediumSystemFont(14);
     s.textColor = Color.white();
     s.centerAlignText();
@@ -198,7 +198,6 @@ function confettiLib() {
 }
 
 function celebrationHTML() {
-  const you = escapeHtml(cfg.you);
   const city = escapeHtml(cfg.city);
   const top = cfg.gradientTop;
   const bottom = cfg.gradientBottom;
@@ -226,8 +225,8 @@ function celebrationHTML() {
 <div class="wrap">
   <div class="emoji">✈️❤️🇪🇸</div>
   <h1 class="hoy">¡HOY!</h1>
-  <p class="msg">Hoy llega ${you} a ${city}</p>
-  <p class="sub">se acabó la espera 🥹</p>
+  <p class="msg">Hoy es el reencuentro en ${city}</p>
+  <p class="sub">se acabó la espera 🥹❤️</p>
   <button id="snd">🔊 sonido</button>
 </div>
 <audio id="a" preload="auto" src="https://actions.google.com/sounds/v1/crowds/battle_crowd_celebrate.ogg"></audio>
@@ -266,14 +265,13 @@ function celebrationHTML() {
 }
 
 function statusHTML(days) {
-  const you = escapeHtml(cfg.you);
   const city = escapeHtml(cfg.city);
   const top = cfg.gradientTop;
   const bottom = cfg.gradientBottom;
   const p = core.preciseLeft();
   const frac = core.progressFraction();
   const pct = frac === null ? null : Math.round(frac * 100);
-  const label = days === 1 ? `día para ver a ${you}` : `días para ver a ${you}`;
+  const label = days === 1 ? "día para el reencuentro ❤️" : "días para el reencuentro ❤️";
 
   return `<!doctype html><html><head><meta charset="utf8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
