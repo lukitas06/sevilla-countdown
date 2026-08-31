@@ -15,6 +15,11 @@
 const core = importModule("SevillaCore");
 const cfg = importModule("SevillaConfig");
 
+// Tapping a Scriptable widget defaults to just "Open App". Point it at this
+// run-script URL so a tap RE-RUNS this script (→ celebration/status screen)
+// instead of dumping the user in the editor.
+const RUN_URL = "scriptable:///run?scriptName=" + encodeURIComponent("Sevilla Widget");
+
 if (config.runsInWidget) {
   const w = buildWidget(config.widgetFamily || "small");
   Script.setWidget(w);
@@ -54,6 +59,7 @@ function buildHomeWidget(family) {
   // Ask iOS to reload just after the next Sevilla midnight so the number ticks
   // over. This is a hint — iOS may delay it on low battery / if rarely viewed.
   w.refreshAfterDate = core.nextLocalMidnight();
+  w.url = RUN_URL; // tap → run the script (celebration/status), not the editor
   return w;
 }
 
@@ -99,6 +105,7 @@ function buildLockRectangular() {
   sub.lineLimit = 1;
 
   w.refreshAfterDate = core.nextLocalMidnight();
+  w.url = RUN_URL;
   return w;
 }
 
@@ -128,6 +135,7 @@ function buildLockCircular() {
   el.applyFillingContentMode();
   stack.addSpacer();
   w.refreshAfterDate = core.nextLocalMidnight();
+  w.url = RUN_URL;
   return w;
 }
 
@@ -217,6 +225,7 @@ function buildLockInline() {
   t.font = Font.mediumSystemFont(13);
   t.textColor = Color.white();
   w.refreshAfterDate = core.nextLocalMidnight();
+  w.url = RUN_URL;
   return w;
 }
 
