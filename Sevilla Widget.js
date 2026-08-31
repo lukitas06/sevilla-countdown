@@ -71,7 +71,12 @@ function lockText() {
   return { big: "❤️", small: n <= 7 ? "¡juntos!" : `+${n} días` };
 }
 
-// Rectangular: the roomiest lock-screen slot → "✈️ 6 días · Sevilla".
+// IMPORTANT: lock-screen text must be explicitly WHITE. iOS renders accessory
+// widgets through a vibrancy/tint layer; Scriptable's default text color comes
+// out invisible. Setting Color.white() lets iOS tint it to the wallpaper so it
+// actually shows. (Every addText below sets textColor for this reason.)
+
+// Rectangular: the roomiest lock-screen slot → "✈️ 6 días" + subtitle.
 function buildLockRectangular() {
   const w = new ListWidget();
   const t = lockText();
@@ -81,12 +86,15 @@ function buildLockRectangular() {
   row.centerAlignContent();
   const plane = row.addText("✈️ ");
   plane.font = Font.mediumSystemFont(14);
-  const num = row.addText(days > 0 ? `${t.big} ${t.small}` : `${t.big} ${t.small}`);
+  plane.textColor = Color.white();
+  const num = row.addText(`${t.big} ${t.small}`);
   num.font = Font.boldSystemFont(15);
+  num.textColor = Color.white();
 
   w.addSpacer(2);
   const sub = w.addText(days > 0 ? `para el reencuentro en ${cfg.city}` : cfg.city);
   sub.font = Font.systemFont(11);
+  sub.textColor = Color.white();
   sub.textOpacity = 0.7;
   sub.lineLimit = 1;
 
@@ -103,6 +111,7 @@ function buildLockCircular() {
   stack.addSpacer();
   const big = stack.addText(t.big);
   big.font = t.big.length <= 2 ? Font.boldSystemFont(22) : Font.boldSystemFont(14);
+  big.textColor = Color.white();
   big.minimumScaleFactor = 0.5;
   big.centerAlignText();
   stack.addSpacer();
@@ -121,6 +130,7 @@ function buildLockInline() {
   else s = Math.abs(days) <= 7 ? `❤️ ¡Juntos en ${cfg.city}!` : `❤️ +${Math.abs(days)} días juntos`;
   const t = w.addText(s);
   t.font = Font.mediumSystemFont(13);
+  t.textColor = Color.white();
   w.refreshAfterDate = core.nextLocalMidnight();
   return w;
 }
