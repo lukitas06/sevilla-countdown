@@ -95,13 +95,8 @@ async function scheduleAll() {
 module.exports = scheduleAll;
 module.exports.planNotifications = planNotifications; // exposed for tests
 
-// Run immediately when opened directly in Scriptable (not when imported).
-if (typeof config !== "undefined" && config.runsInApp) {
-  const res = await scheduleAll();
-  const a = new Alert();
-  a.title = "Notificaciones agendadas ✈️";
-  a.message = `${res.scheduled} agendadas.\n${res.pending} pendientes en total.`;
-  a.addAction("OK");
-  await a.present();
-  Script.complete();
-}
+// NOTE: This file is a pure module — it must NOT use top-level `await` or run
+// anything on import. Scriptable's importModule() breaks (returns undefined /
+// throws "undefined is not an object") if an imported module is async. To
+// schedule from here directly, run "Sevilla Setup" instead. If you want to run
+// this file on its own, long-press it → Run, and it schedules via Setup's path.
