@@ -116,7 +116,15 @@ function buildLockCircular() {
   if (days <= 0) frac = 1;
 
   const img = drawProgressRing(t.big, frac);
-  w.backgroundImage = img;
+  // Use addImage (not backgroundImage) — backgroundImage doesn't render in the
+  // circular lock-screen slot. Center it and let it fill the slot.
+  w.setPadding(0, 0, 0, 0);
+  const stack = w.addStack();
+  stack.addSpacer();
+  const el = stack.addImage(img);
+  el.imageSize = new Size(58, 58); // circular slot is ~58pt; iOS scales as needed
+  el.applyFillingContentMode();
+  stack.addSpacer();
   w.refreshAfterDate = core.nextLocalMidnight();
   return w;
 }
@@ -125,7 +133,7 @@ function buildLockCircular() {
 // the bright arc is filled, sweeping clockwise from 12 o'clock. Monochrome so it
 // works with iOS's lock-screen tint.
 function drawProgressRing(label, frac) {
-  const S = 200; // draw big; iOS scales it down into the small circular slot
+  const S = 300; // draw big (≥228px) so it stays sharp scaled into the slot
   const dc = new DrawContext();
   dc.size = new Size(S, S);
   dc.opaque = false;
@@ -133,11 +141,17 @@ function drawProgressRing(label, frac) {
 
   const cx = S / 2;
   const cy = S / 2;
-  const lineW = 16;
-  const r = S / 2 - lineW / 2 - 2;
+  const lineW = 22;
+  const r = S / 2 - lineW / 2 - 3;
+
+  // Opaque base disc: iOS tints lock-screen images by their alpha, so a solid
+  // shape is what actually shows. A subtle translucent fill gives depth on the
+  // home screen too without hiding the wallpaper on the lock screen.
+  dc.setFillColor(new Color("#ffffff", 0.15));
+  dc.fillEllipse(new Rect(cx - r - lineW / 2, cy - r - lineW / 2, (r + lineW / 2) * 2, (r + lineW / 2) * 2));
 
   // Track: faint full ring.
-  dc.setStrokeColor(new Color("#ffffff", 0.28));
+  dc.setStrokeColor(new Color("#ffffff", 0.35));
   dc.setLineWidth(lineW);
   dc.strokeEllipse(new Rect(cx - r, cy - r, r * 2, r * 2));
 
@@ -169,10 +183,10 @@ function drawProgressRing(label, frac) {
 
   // Center label (the day number, or ¡HOY!/❤️).
   const big = label.length <= 2;
-  dc.setFont(Font.boldSystemFont(big ? 74 : 46));
+  dc.setFont(Font.boldSystemFont(big ? 112 : 68));
   dc.setTextColor(Color.white());
   dc.setTextAlignedCenter();
-  const th = big ? 90 : 60;
+  const th = big ? 135 : 92;
   dc.drawTextInRect(label, new Rect(0, cy - th / 2, S, th));
 
   return dc.getImage();
