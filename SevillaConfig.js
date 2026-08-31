@@ -9,10 +9,10 @@ module.exports = {
   // December in Spain is CET = UTC+1, so the offset is +01:00.
   // (Spain is only on CEST/+02:00 until the last Sunday of October.)
   // Format: "YYYY-MM-DDThh:mm:ss+01:00"
-  // Arrival: 13 Dec 2026. Time is a placeholder (only affects the precise
-  // "X d · Y h" line in the last 48h — the day-count flips at Sevilla midnight).
-  // Update the 14:30 to the real flight-arrival time when you know it.
-  targetISO: "2026-12-13T14:30:00+01:00",
+  // Real arrival: 13 Dec 2026, 21:05 Sevilla time (CET). The day-count flips at
+  // Sevilla midnight; the exact time only drives the "X d · Y h" line in the
+  // final 48h and the precise countdown on the status screen.
+  targetISO: "2026-12-13T21:05:00+01:00",
 
   // Optional: when the countdown "started" (e.g. the day she flew to Sevilla,
   // or the day you booked). Only used to draw the progress bar. Set to null to
