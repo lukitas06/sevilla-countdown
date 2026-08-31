@@ -102,22 +102,80 @@ function buildLockRectangular() {
   return w;
 }
 
-// Circular: just the number in a tight ring (or ¡HOY!/❤️).
+// Circular: a progress RING that fills as the reunion nears, with the day count
+// (or ¡HOY!/❤️) in the center. Drawn as an image so it looks crisp; the ring
+// uses the separation progress (startISO → targetISO).
 function buildLockCircular() {
   const w = new ListWidget();
   const t = lockText();
-  w.addSpacer();
-  const stack = w.addStack();
-  stack.addSpacer();
-  const big = stack.addText(t.big);
-  big.font = t.big.length <= 2 ? Font.boldSystemFont(22) : Font.boldSystemFont(14);
-  big.textColor = Color.white();
-  big.minimumScaleFactor = 0.5;
-  big.centerAlignText();
-  stack.addSpacer();
-  w.addSpacer();
+  const days = core.daysRemaining();
+
+  // Progress 0..1 of the whole wait; fall back to a full ring on/after the day.
+  let frac = core.progressFraction();
+  if (frac === null) frac = days <= 0 ? 1 : 0;
+  if (days <= 0) frac = 1;
+
+  const img = drawProgressRing(t.big, frac);
+  w.backgroundImage = img;
   w.refreshAfterDate = core.nextLocalMidnight();
   return w;
+}
+
+// Renders a centered label inside a circular gauge. `frac` (0..1) is how much of
+// the bright arc is filled, sweeping clockwise from 12 o'clock. Monochrome so it
+// works with iOS's lock-screen tint.
+function drawProgressRing(label, frac) {
+  const S = 200; // draw big; iOS scales it down into the small circular slot
+  const dc = new DrawContext();
+  dc.size = new Size(S, S);
+  dc.opaque = false;
+  dc.respectScreenScale = true;
+
+  const cx = S / 2;
+  const cy = S / 2;
+  const lineW = 16;
+  const r = S / 2 - lineW / 2 - 2;
+
+  // Track: faint full ring.
+  dc.setStrokeColor(new Color("#ffffff", 0.28));
+  dc.setLineWidth(lineW);
+  dc.strokeEllipse(new Rect(cx - r, cy - r, r * 2, r * 2));
+
+  // Progress arc: bright, built from short segments (reliable across versions).
+  const clamped = Math.max(0, Math.min(1, frac));
+  if (clamped > 0) {
+    dc.setStrokeColor(new Color("#ffffff", 0.95));
+    dc.setLineWidth(lineW);
+    const start = -Math.PI / 2; // 12 o'clock
+    const end = start + clamped * Math.PI * 2;
+    const steps = Math.max(2, Math.ceil(clamped * 90)); // ~1 seg per 4°
+    const pts = [];
+    for (let i = 0; i <= steps; i++) {
+      const a = start + ((end - start) * i) / steps;
+      pts.push(new Point(cx + r * Math.cos(a), cy + r * Math.sin(a)));
+    }
+    const p = new Path();
+    p.addLines(pts);
+    dc.addPath(p);
+    dc.strokePath();
+
+    // Rounded caps: dots at both ends of the arc so it looks finished.
+    dc.setFillColor(new Color("#ffffff", 0.95));
+    for (const a of [start, end]) {
+      const dotR = lineW / 2;
+      dc.fillEllipse(new Rect(cx + r * Math.cos(a) - dotR, cy + r * Math.sin(a) - dotR, dotR * 2, dotR * 2));
+    }
+  }
+
+  // Center label (the day number, or ¡HOY!/❤️).
+  const big = label.length <= 2;
+  dc.setFont(Font.boldSystemFont(big ? 74 : 46));
+  dc.setTextColor(Color.white());
+  dc.setTextAlignedCenter();
+  const th = big ? 90 : 60;
+  dc.drawTextInRect(label, new Rect(0, cy - th / 2, S, th));
+
+  return dc.getImage();
 }
 
 // Inline: the one-line slot above the clock → "✈️ 6 días · Sevilla".
