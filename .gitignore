@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Generated HTML previews (run `node test/gen-preview.js` to recreate)
+celebration-preview.html
+status-preview.html
