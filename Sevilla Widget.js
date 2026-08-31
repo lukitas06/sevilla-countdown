@@ -115,7 +115,9 @@ function buildLockCircular() {
   if (frac === null) frac = days <= 0 ? 1 : 0;
   if (days <= 0) frac = 1;
 
-  const img = drawProgressRing(t.big, frac);
+  // Label "días" under the number while counting down (none on/after the day).
+  const sublabel = days > 0 ? (days === 1 ? "día" : "días") : null;
+  const img = drawProgressRing(t.big, frac, sublabel);
   // Use addImage (not backgroundImage) — backgroundImage doesn't render in the
   // circular lock-screen slot. Center it and let it fill the slot.
   w.setPadding(0, 0, 0, 0);
@@ -132,7 +134,7 @@ function buildLockCircular() {
 // Renders a centered label inside a circular gauge. `frac` (0..1) is how much of
 // the bright arc is filled, sweeping clockwise from 12 o'clock. Monochrome so it
 // works with iOS's lock-screen tint.
-function drawProgressRing(label, frac) {
+function drawProgressRing(label, frac, sublabel) {
   const S = 300; // draw big (≥228px) so it stays sharp scaled into the slot
   const dc = new DrawContext();
   dc.size = new Size(S, S);
@@ -181,13 +183,24 @@ function drawProgressRing(label, frac) {
     }
   }
 
-  // Center label (the day number, or ¡HOY!/❤️).
-  const big = label.length <= 2;
-  dc.setFont(Font.boldSystemFont(big ? 112 : 68));
+  // Center label. If a sublabel is given (e.g. "días"), stack it under the
+  // number; nudge the number up so the pair stays visually centered.
+  const isNum = /^\d+$/.test(label);
   dc.setTextColor(Color.white());
   dc.setTextAlignedCenter();
-  const th = big ? 135 : 92;
-  dc.drawTextInRect(label, new Rect(0, cy - th / 2, S, th));
+
+  if (sublabel && isNum) {
+    dc.setFont(Font.boldSystemFont(96));
+    dc.drawTextInRect(label, new Rect(0, cy - 92, S, 120));
+    dc.setFont(Font.mediumSystemFont(40));
+    dc.setTextColor(new Color("#ffffff", 0.85));
+    dc.drawTextInRect(sublabel, new Rect(0, cy + 26, S, 52));
+  } else {
+    const big = label.length <= 2;
+    dc.setFont(Font.boldSystemFont(big ? 112 : 68));
+    const th = big ? 135 : 92;
+    dc.drawTextInRect(label, new Rect(0, cy - th / 2, S, th));
+  }
 
   return dc.getImage();
 }
@@ -290,15 +303,26 @@ function renderAfter(w, days) {
 function addProgressBar(w, isSmall) {
   const frac = core.progressFraction();
   if (frac === null) return;
-  const innerWidth = isSmall ? 120 : 280; // approx inner width; stacks don't expose parent size
-  const bar = w.addStack();
-  bar.size = new Size(innerWidth, 8);
-  bar.cornerRadius = 4;
-  bar.backgroundColor = new Color("#ffffff", 0.25);
-  const fill = bar.addStack();
-  fill.size = new Size(Math.max(2, Math.round(innerWidth * frac)), 8);
-  fill.cornerRadius = 4;
+
+  // Full-width track: an outer row with a trailing spacer forces the track
+  // stack to stretch edge-to-edge (Scriptable stacks don't expose parent width,
+  // so we can't set an absolute width reliably). The fill is a fraction of an
+  // assumed inner width; the track itself spans the whole widget.
+  const innerWidth = isSmall ? 130 : 300; // used only to size the FILL portion
+  const clamped = Math.max(0, Math.min(1, frac));
+
+  const track = w.addStack();
+  track.backgroundColor = new Color("#ffffff", 0.22);
+  track.cornerRadius = 3;
+  track.size = new Size(0, 6); // width 0 → grows to fit; height fixed
+  track.layoutHorizontally();
+
+  const fill = track.addStack();
   fill.backgroundColor = new Color("#ffffff", 0.95);
+  fill.cornerRadius = 3;
+  fill.size = new Size(Math.max(3, Math.round(innerWidth * clamped)), 6);
+
+  track.addSpacer(); // pushes the fill to the LEFT, track stretches full width
 }
 
 function applyBackground(w) {
